@@ -1,0 +1,80 @@
+{
+  "$defs": {
+    "Address": {
+      "properties": {
+        "street": {
+          "title": "Street",
+          "type": "string"
+        },
+        "city": {
+          "title": "City",
+          "type": "string"
+        },
+        "zip_code": {
+          "title": "Zip Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "street",
+        "city",
+        "zip_code"
+      ],
+      "title": "Address",
+      "type": "object"
+    },
+    "Person": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "age": {
+          "title": "Age",
+          "type": "integer"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "required": [
+        "name",
+        "age"
+      ],
+      "title": "Person",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "address": {
+      "$ref": "#/$defs/Address"
+    },
+    "employees": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Person"
+      },
+      "title": "Employees",
+      "type": "array"
+    }
+  },
+  "required": [
+    "name",
+    "address"
+  ],
+  "title": "Company",
+  "type": "object"
+}
