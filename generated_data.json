@@ -1,0 +1,25 @@
+{
+  "lme_tokenizer_input": {
+    "graph_type": 1,
+    "request_id": 0,
+    "input_prompt": "user prompt here",
+    "system_prompt": "systemp prompt maybe none",
+    "enable_thinking": false,
+    "input_pics": null
+  },
+  "lme_tokenizer_output": {
+    "graph_type": 1,
+    "status": 0,
+    "request_id": 0,
+    "tokens": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "proc_modes": [
+      1
+    ]
+  }
+}

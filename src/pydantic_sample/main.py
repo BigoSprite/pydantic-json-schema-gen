@@ -5,7 +5,6 @@ import json
 import os
 from pathlib import Path
 from pydantic import BaseModel
-import tomllib # Python 3.11+, 对于 3.10 及以下需要安装 toml 或 pytomlps
 
 def get_default_prompts():
     """返回默认提示信息"""
@@ -21,6 +20,7 @@ def get_default_prompts():
         "console_header": "--- JSON Schemas (Console Output) ---",
         "console_model_header": "\n--- Schema for '{name}' ---",
         "default_output_file": "generated_schemas.json",
+        "default_output_file_json_data": "generated_data.json",
         "input_cancel_msg": "操作被取消。",
         "file_not_found_error": "错误: 找不到模型文件 'model.py'",
         "invalid_input_format": "输入格式错误，请输入数字，用逗号分隔，或输入 'all'。",
@@ -115,6 +115,43 @@ def output_schemas(schemas: list, output_file: str, prompts: dict):
     
     print(f"Schema 已保存到 {output_file}")
 
+def output_json_data(data_list: list, output_file: str, prompts: dict):
+    """
+    将生成的 JSON 示例数据列表写入文件。
+    
+    Args:
+        data_list: 包含 (模型名, JSON字符串) 元组的列表。
+        output_file: 输出文件路径。
+        prompts: 提示词字典。
+    """
+    # 控制台输出
+    print(f"\n--- JSON 示例数据 (Console Output) ---")
+    for name, json_str in data_list:
+        print(f"\n--- 示例数据 for '{name}' ---")
+        # json_str 通常是已经格式化好的字符串，直接打印
+        print(json_str)
+
+    # 文件输出
+    print(f"\n{prompts['output_file_msg'].format(filename=output_file)}")
+    
+    # 准备写入文件的数据结构
+    # 如果只有一个模型，直接写入该 JSON 对象
+    # 如果有多个模型，写入一个 {模型名: JSON对象} 的字典
+    if len(data_list) == 1:
+        # 只有一个时，直接写入内容（注意：json_str 是字符串，需要先 loads 成对象）
+        _, json_str = data_list[0]
+        file_data = json.loads(json_str) 
+    else:
+        combined_data = {}
+        for name, json_str in data_list:
+            combined_data[name] = json.loads(json_str)
+        file_data = combined_data
+
+    with open(output_file, 'w', encoding='utf-8') as f:
+        json.dump(file_data, f, indent=2, ensure_ascii=False)
+    
+    print(f"JSON 示例数据已保存到 {output_file}")
+
 def main():
     prompts = get_default_prompts()
 
@@ -145,14 +182,28 @@ def main():
         return
 
     schemas_to_output = []
+    json_data_to_output = []
     for cls in selected_model_classes:
         print(prompts["generating_msg"].format(name=cls.__name__))
         schema = cls.model_json_schema()
         schemas_to_output.append((cls.__name__, schema))
 
+        # 对定义了dump_json的类，输出json示例
+        if hasattr(cls, 'dump_json'):
+            method_dump_json = getattr(cls, 'dump_json')
+            json_data = method_dump_json()
+            json_data_to_output.append((cls.__name__, json_data))
+            print(f'{cls.__name__} json_data like:\n{json_data}')
+        else:
+            print(f"class {cls.__name__} does not define @classmehtod dump_json")
+
     # 使用配置文件中的默认输出文件名
     output_file = prompts["default_output_file"]
     output_schemas(schemas_to_output, output_file, prompts)
+
+    if json_data_to_output:
+        output_file_data = prompts["default_output_file_json_data"]
+        output_json_data(json_data_to_output, output_file_data, prompts)
 
 if __name__ == "__main__":
     main()

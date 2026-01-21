@@ -1,80 +1,552 @@
 {
-  "$defs": {
-    "Address": {
-      "properties": {
-        "street": {
-          "title": "Street",
-          "type": "string"
-        },
-        "city": {
-          "title": "City",
-          "type": "string"
-        },
-        "zip_code": {
-          "title": "Zip Code",
-          "type": "string"
-        }
+  "Address": {
+    "properties": {
+      "street": {
+        "title": "Street",
+        "type": "string"
       },
-      "required": [
-        "street",
-        "city",
-        "zip_code"
-      ],
-      "title": "Address",
-      "type": "object"
+      "city": {
+        "title": "City",
+        "type": "string"
+      },
+      "zip_code": {
+        "title": "Zip Code",
+        "type": "string"
+      }
     },
-    "Person": {
-      "properties": {
-        "name": {
-          "title": "Name",
-          "type": "string"
+    "required": [
+      "street",
+      "city",
+      "zip_code"
+    ],
+    "title": "Address",
+    "type": "object"
+  },
+  "Company": {
+    "$defs": {
+      "Address": {
+        "properties": {
+          "street": {
+            "title": "Street",
+            "type": "string"
+          },
+          "city": {
+            "title": "City",
+            "type": "string"
+          },
+          "zip_code": {
+            "title": "Zip Code",
+            "type": "string"
+          }
         },
-        "age": {
-          "title": "Age",
+        "required": [
+          "street",
+          "city",
+          "zip_code"
+        ],
+        "title": "Address",
+        "type": "object"
+      },
+      "Person": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "age": {
+            "title": "Age",
+            "type": "integer"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Email"
+          }
+        },
+        "required": [
+          "name",
+          "age"
+        ],
+        "title": "Person",
+        "type": "object"
+      }
+    },
+    "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string"
+      },
+      "address": {
+        "$ref": "#/$defs/Address"
+      },
+      "employees": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/Person"
+        },
+        "title": "Employees",
+        "type": "array"
+      }
+    },
+    "required": [
+      "name",
+      "address"
+    ],
+    "title": "Company",
+    "type": "object"
+  },
+  "Person": {
+    "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string"
+      },
+      "age": {
+        "title": "Age",
+        "type": "integer"
+      },
+      "email": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Email"
+      }
+    },
+    "required": [
+      "name",
+      "age"
+    ],
+    "title": "Person",
+    "type": "object"
+  },
+  "lme_detokenizer_input": {
+    "properties": {},
+    "title": "lme_detokenizer_input",
+    "type": "object"
+  },
+  "lme_detokenizer_output": {
+    "properties": {},
+    "title": "lme_detokenizer_output",
+    "type": "object"
+  },
+  "lme_llm_input": {
+    "properties": {},
+    "title": "lme_llm_input",
+    "type": "object"
+  },
+  "lme_llm_output": {
+    "properties": {},
+    "title": "lme_llm_output",
+    "type": "object"
+  },
+  "lme_preprocess_input": {
+    "$defs": {
+      "DataFormat": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "title": "DataFormat",
+        "type": "integer"
+      },
+      "DataType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "title": "DataType",
+        "type": "integer"
+      },
+      "GraphType": {
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "title": "GraphType",
+        "type": "integer"
+      },
+      "MemoryType": {
+        "enum": [
+          0,
+          1
+        ],
+        "title": "MemoryType",
+        "type": "integer"
+      },
+      "Tensor": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Data"
+          },
+          "data_type": {
+            "$ref": "#/$defs/DataType"
+          },
+          "memory_type": {
+            "$ref": "#/$defs/MemoryType"
+          },
+          "device_id": {
+            "title": "Device Id",
+            "type": "integer"
+          },
+          "dims": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Dims",
+            "type": "array"
+          },
+          "format": {
+            "$ref": "#/$defs/DataFormat"
+          }
+        },
+        "required": [
+          "data_type",
+          "memory_type",
+          "device_id",
+          "dims",
+          "format"
+        ],
+        "title": "Tensor",
+        "type": "object"
+      }
+    },
+    "properties": {
+      "request_id": {
+        "title": "Request Id",
+        "type": "integer"
+      },
+      "graph_type": {
+        "$ref": "#/$defs/GraphType"
+      },
+      "input_prompt": {
+        "title": "Input Prompt",
+        "type": "string"
+      },
+      "input_pics": {
+        "items": {
+          "$ref": "#/$defs/Tensor"
+        },
+        "title": "Input Pics",
+        "type": "array"
+      },
+      "fps": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Fps"
+      },
+      "frame_ids": {
+        "items": {
           "type": "integer"
         },
-        "email": {
-          "anyOf": [
-            {
-              "type": "string"
+        "title": "Frame Ids",
+        "type": "array"
+      },
+      "config": {
+        "title": "Config",
+        "type": "string"
+      },
+      "lora_id": {
+        "title": "Lora Id",
+        "type": "string"
+      },
+      "streaming": {
+        "default": false,
+        "description": "enable streaming or not",
+        "title": "Streaming",
+        "type": "boolean"
+      },
+      "enable_thinking": {
+        "default": 0,
+        "description": "thiniking mode with 0-disable, 1-enable",
+        "title": "Enable Thinking",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "request_id",
+      "graph_type",
+      "input_prompt",
+      "input_pics",
+      "frame_ids",
+      "config",
+      "lora_id"
+    ],
+    "title": "lme_preprocess_input",
+    "type": "object"
+  },
+  "lme_preprocess_output": {
+    "properties": {},
+    "title": "lme_preprocess_output",
+    "type": "object"
+  },
+  "lme_tokenizer_input": {
+    "$defs": {
+      "DataFormat": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "title": "DataFormat",
+        "type": "integer"
+      },
+      "DataType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "title": "DataType",
+        "type": "integer"
+      },
+      "GraphType": {
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "title": "GraphType",
+        "type": "integer"
+      },
+      "MemoryType": {
+        "enum": [
+          0,
+          1
+        ],
+        "title": "MemoryType",
+        "type": "integer"
+      },
+      "Tensor": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Data"
+          },
+          "data_type": {
+            "$ref": "#/$defs/DataType"
+          },
+          "memory_type": {
+            "$ref": "#/$defs/MemoryType"
+          },
+          "device_id": {
+            "title": "Device Id",
+            "type": "integer"
+          },
+          "dims": {
+            "items": {
+              "type": "integer"
             },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Email"
-        }
-      },
-      "required": [
-        "name",
-        "age"
-      ],
-      "title": "Person",
-      "type": "object"
-    }
-  },
-  "properties": {
-    "name": {
-      "title": "Name",
-      "type": "string"
+            "title": "Dims",
+            "type": "array"
+          },
+          "format": {
+            "$ref": "#/$defs/DataFormat"
+          }
+        },
+        "required": [
+          "data_type",
+          "memory_type",
+          "device_id",
+          "dims",
+          "format"
+        ],
+        "title": "Tensor",
+        "type": "object"
+      }
     },
-    "address": {
-      "$ref": "#/$defs/Address"
-    },
-    "employees": {
-      "default": [],
-      "items": {
-        "$ref": "#/$defs/Person"
+    "properties": {
+      "graph_type": {
+        "$ref": "#/$defs/GraphType"
       },
-      "title": "Employees",
-      "type": "array"
-    }
+      "request_id": {
+        "title": "Request Id",
+        "type": "integer"
+      },
+      "input_prompt": {
+        "default": false,
+        "description": "user prompt",
+        "title": "Input Prompt",
+        "type": "string"
+      },
+      "system_prompt": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": "",
+        "description": "system prompt",
+        "title": "System Prompt"
+      },
+      "enable_thinking": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": false,
+        "description": "enable thinking mode or not",
+        "title": "Enable Thinking"
+      },
+      "input_pics": {
+        "anyOf": [
+          {
+            "items": {
+              "$ref": "#/$defs/Tensor"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "image information for generating lmm chat template",
+        "title": "Input Pics"
+      }
+    },
+    "required": [
+      "graph_type",
+      "request_id"
+    ],
+    "title": "lme_tokenizer_input",
+    "type": "object"
   },
-  "required": [
-    "name",
-    "address"
-  ],
-  "title": "Company",
-  "type": "object"
+  "lme_tokenizer_output": {
+    "$defs": {
+      "GraphType": {
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "title": "GraphType",
+        "type": "integer"
+      },
+      "ProcMode": {
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "title": "ProcMode",
+        "type": "integer"
+      }
+    },
+    "properties": {
+      "graph_type": {
+        "$ref": "#/$defs/GraphType"
+      },
+      "status": {
+        "title": "Status",
+        "type": "integer"
+      },
+      "request_id": {
+        "title": "Request Id",
+        "type": "integer"
+      },
+      "tokens": {
+        "description": "output input ids from tokenizer operator",
+        "items": {
+          "type": "integer"
+        },
+        "title": "Tokens",
+        "type": "array"
+      },
+      "proc_modes": {
+        "description": "tokenizer prrocess modes",
+        "items": {
+          "$ref": "#/$defs/ProcMode"
+        },
+        "title": "Proc Modes",
+        "type": "array"
+      }
+    },
+    "required": [
+      "graph_type",
+      "status",
+      "request_id",
+      "tokens",
+      "proc_modes"
+    ],
+    "title": "lme_tokenizer_output",
+    "type": "object"
+  },
+  "lme_vit_input": {
+    "properties": {},
+    "title": "lme_vit_input",
+    "type": "object"
+  },
+  "lme_vit_output": {
+    "properties": {},
+    "title": "lme_vit_output",
+    "type": "object"
+  }
 }
