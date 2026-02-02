@@ -1,16 +1,226 @@
 {
+  "lme_detokenizer_input": {
+    "meta_data": {
+      "graph_type": 1,
+      "request_id": 1004,
+      "operation": 31
+    },
+    "llm_data": {
+      "meta_data": {
+        "graph_type": 1,
+        "status_msg": "success",
+        "status_code": 0,
+        "request_id": 0
+      },
+      "is_final": true,
+      "beam_tokens": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "advance_output": {
+        "generation_logits": {
+          "data": null,
+          "data_type": 1,
+          "memory_type": 0,
+          "device_id": 0,
+          "dims": [
+            1,
+            3,
+            224,
+            224
+          ],
+          "format": 3
+        }
+      },
+      "dictionary_index": 1,
+      "search_tokens": [
+        1,
+        2,
+        3
+      ],
+      "input_tokens_num": 1086
+    }
+  },
+  "lme_detokenizer_output": {
+    "meta_data": {
+      "graph_type": 1,
+      "status_msg": "Detokenization complete",
+      "status_code": 0,
+      "request_id": 1004
+    },
+    "is_final": true,
+    "beam_strings": [
+      "Hello, this is a generated response."
+    ],
+    "beam_tokens_nums": [
+      5
+    ],
+    "logits": {
+      "1": 0.99,
+      "2": 0.01
+    },
+    "input_tokens_num": 10,
+    "feature": ""
+  },
+  "lme_llm_input": {
+    "meta_data": {
+      "graph_type": 1,
+      "request_id": 1003,
+      "operation": 31
+    },
+    "config": "{\"max_length\": 2048, \"temperature\": 0.7}",
+    "streaming": false,
+    "lora_id": "default",
+    "tokenizer_data": {
+      "meta_data": {
+        "graph_type": 1,
+        "status_msg": "success",
+        "status_code": 0,
+        "request_id": 0
+      },
+      "tokens": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "proc_modes": [
+        1
+      ]
+    },
+    "vit_data": {
+      "meta_data": {
+        "graph_type": 2,
+        "status_msg": "ViT inference success",
+        "status_code": 0,
+        "request_id": 1002
+      },
+      "pic_tokens": [
+        {
+          "data": null,
+          "data_type": 7,
+          "memory_type": 1,
+          "device_id": 0,
+          "dims": [
+            1,
+            576,
+            1024
+          ],
+          "format": 7
+        }
+      ]
+    }
+  },
+  "lme_llm_output": {
+    "meta_data": {
+      "graph_type": 1,
+      "status_msg": "success",
+      "status_code": 0,
+      "request_id": 0
+    },
+    "is_final": true,
+    "beam_tokens": [
+      [
+        1,
+        2,
+        3
+      ]
+    ],
+    "advance_output": {
+      "generation_logits": {
+        "data": null,
+        "data_type": 1,
+        "memory_type": 0,
+        "device_id": 0,
+        "dims": [
+          1,
+          3,
+          224,
+          224
+        ],
+        "format": 3
+      }
+    },
+    "dictionary_index": 1,
+    "search_tokens": [
+      1,
+      2,
+      3
+    ],
+    "input_tokens_num": 1086
+  },
+  "lme_preprocess_input": {
+    "meta_data": {
+      "graph_type": 2,
+      "request_id": 1001,
+      "operation": 31
+    },
+    "input_pics": [
+      {
+        "data": null,
+        "data_type": 1,
+        "memory_type": 0,
+        "device_id": 0,
+        "dims": [
+          1920,
+          1080,
+          3
+        ],
+        "format": 1
+      }
+    ],
+    "fps": 0.0,
+    "frame_ids": null
+  },
+  "lme_preprocess_output": {
+    "meta_data": {
+      "graph_type": 2,
+      "status_msg": "Preprocessing completed",
+      "status_code": 0,
+      "request_id": 1001
+    },
+    "output_data": [
+      {
+        "pic": {
+          "data": null,
+          "data_type": 5,
+          "memory_type": 1,
+          "device_id": 0,
+          "dims": [
+            3,
+            224,
+            224
+          ],
+          "format": 3
+        },
+        "patch_num_width": 14,
+        "patch_num": 196
+      }
+    ],
+    "proc_mode": 1
+  },
   "lme_tokenizer_input": {
-    "graph_type": 1,
-    "request_id": 0,
+    "meta_data": {
+      "graph_type": 1,
+      "request_id": 0,
+      "operation": 31
+    },
     "input_prompt": "user prompt here",
-    "system_prompt": "systemp prompt maybe none",
+    "system_prompt": "system prompt maybe none",
     "enable_thinking": false,
     "input_pics": null
   },
   "lme_tokenizer_output": {
-    "graph_type": 1,
-    "status": 0,
-    "request_id": 0,
+    "meta_data": {
+      "graph_type": 1,
+      "status_msg": "success",
+      "status_code": 0,
+      "request_id": 0
+    },
     "tokens": [
       1,
       2,
@@ -20,6 +230,62 @@
     ],
     "proc_modes": [
       1
+    ]
+  },
+  "lme_vit_input": {
+    "meta_data": {
+      "graph_type": 2,
+      "request_id": 1002,
+      "operation": 31
+    },
+    "preprocess_data": {
+      "meta_data": {
+        "graph_type": 2,
+        "status_msg": "Preprocessing completed",
+        "status_code": 0,
+        "request_id": 1001
+      },
+      "output_data": [
+        {
+          "pic": {
+            "data": null,
+            "data_type": 5,
+            "memory_type": 1,
+            "device_id": 0,
+            "dims": [
+              3,
+              224,
+              224
+            ],
+            "format": 3
+          },
+          "patch_num_width": 14,
+          "patch_num": 196
+        }
+      ],
+      "proc_mode": 1
+    }
+  },
+  "lme_vit_output": {
+    "meta_data": {
+      "graph_type": 2,
+      "status_msg": "ViT inference success",
+      "status_code": 0,
+      "request_id": 1002
+    },
+    "pic_tokens": [
+      {
+        "data": null,
+        "data_type": 7,
+        "memory_type": 1,
+        "device_id": 0,
+        "dims": [
+          1,
+          576,
+          1024
+        ],
+        "format": 7
+      }
     ]
   }
 }

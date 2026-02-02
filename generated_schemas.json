@@ -1,154 +1,744 @@
 {
-  "Address": {
-    "properties": {
-      "street": {
-        "title": "Street",
-        "type": "string"
-      },
-      "city": {
-        "title": "City",
-        "type": "string"
-      },
-      "zip_code": {
-        "title": "Zip Code",
-        "type": "string"
-      }
-    },
-    "required": [
-      "street",
-      "city",
-      "zip_code"
-    ],
-    "title": "Address",
-    "type": "object"
-  },
-  "Company": {
+  "lme_detokenizer_input": {
     "$defs": {
-      "Address": {
-        "properties": {
-          "street": {
-            "title": "Street",
-            "type": "string"
-          },
-          "city": {
-            "title": "City",
-            "type": "string"
-          },
-          "zip_code": {
-            "title": "Zip Code",
-            "type": "string"
-          }
-        },
-        "required": [
-          "street",
-          "city",
-          "zip_code"
+      "DataFormat": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
         ],
-        "title": "Address",
-        "type": "object"
+        "title": "DataFormat",
+        "type": "integer"
       },
-      "Person": {
+      "DataType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "title": "DataType",
+        "type": "integer"
+      },
+      "GraphType": {
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "title": "GraphType",
+        "type": "integer"
+      },
+      "MemoryType": {
+        "enum": [
+          0,
+          1
+        ],
+        "title": "MemoryType",
+        "type": "integer"
+      },
+      "Tensor": {
         "properties": {
-          "name": {
-            "title": "Name",
-            "type": "string"
-          },
-          "age": {
-            "title": "Age",
-            "type": "integer"
-          },
-          "email": {
+          "data": {
             "anyOf": [
-              {
-                "type": "string"
-              },
+              {},
               {
                 "type": "null"
               }
             ],
             "default": null,
-            "title": "Email"
+            "title": "Data"
+          },
+          "data_type": {
+            "$ref": "#/$defs/DataType"
+          },
+          "memory_type": {
+            "$ref": "#/$defs/MemoryType"
+          },
+          "device_id": {
+            "title": "Device Id",
+            "type": "integer"
+          },
+          "dims": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Dims",
+            "type": "array"
+          },
+          "format": {
+            "$ref": "#/$defs/DataFormat"
           }
         },
         "required": [
-          "name",
-          "age"
+          "data_type",
+          "memory_type",
+          "device_id",
+          "dims",
+          "format"
         ],
-        "title": "Person",
+        "title": "Tensor",
+        "type": "object"
+      },
+      "lme_input_meta": {
+        "properties": {
+          "graph_type": {
+            "$ref": "#/$defs/GraphType"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "integer"
+          },
+          "operation": {
+            "default": 1,
+            "description": "Process selection field, with values as powers of 2(2^n): pre = 1, tok = 2, vit = 4, llm = 8, dtk = 16.",
+            "title": "Operation",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "graph_type",
+          "request_id"
+        ],
+        "title": "lme_input_meta",
+        "type": "object"
+      },
+      "lme_llm_output": {
+        "properties": {
+          "meta_data": {
+            "$ref": "#/$defs/lme_output_meta"
+          },
+          "is_final": {
+            "description": "Indicates whether the decoder generation has finished.",
+            "title": "Is Final",
+            "type": "boolean"
+          },
+          "beam_tokens": {
+            "description": "The generated token sequences (output IDs) from each beam.",
+            "items": {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            "title": "Beam Tokens",
+            "type": "array"
+          },
+          "advance_output": {
+            "additionalProperties": {
+              "$ref": "#/$defs/Tensor"
+            },
+            "description": "Intermediate output tensors for advanced processing (e.g., logits, KV-cache).",
+            "title": "Advance Output",
+            "type": "object"
+          },
+          "dictionary_index": {
+            "description": "The index corresponding to the selected token in the model's vocabulary.",
+            "title": "Dictionary Index",
+            "type": "integer"
+          },
+          "search_tokens": {
+            "description": "The token sequences resulting from the search algorithm (e.g., beam search).",
+            "items": {
+              "type": "integer"
+            },
+            "title": "Search Tokens",
+            "type": "array"
+          },
+          "input_tokens_num": {
+            "description": "The total count of input tokens processed by the model.",
+            "title": "Input Tokens Num",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "meta_data",
+          "is_final",
+          "beam_tokens",
+          "advance_output",
+          "dictionary_index",
+          "search_tokens",
+          "input_tokens_num"
+        ],
+        "title": "lme_llm_output",
+        "type": "object"
+      },
+      "lme_output_meta": {
+        "properties": {
+          "graph_type": {
+            "$ref": "#/$defs/GraphType"
+          },
+          "status_msg": {
+            "title": "Status Msg",
+            "type": "string"
+          },
+          "status_code": {
+            "title": "Status Code",
+            "type": "integer"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "graph_type",
+          "status_msg",
+          "status_code",
+          "request_id"
+        ],
+        "title": "lme_output_meta",
         "type": "object"
       }
     },
     "properties": {
-      "name": {
-        "title": "Name",
-        "type": "string"
+      "meta_data": {
+        "$ref": "#/$defs/lme_input_meta"
       },
-      "address": {
-        "$ref": "#/$defs/Address"
-      },
-      "employees": {
-        "default": [],
-        "items": {
-          "$ref": "#/$defs/Person"
-        },
-        "title": "Employees",
-        "type": "array"
+      "llm_data": {
+        "$ref": "#/$defs/lme_llm_output",
+        "description": "The LLM's output is fed into the detokenizer."
       }
     },
     "required": [
-      "name",
-      "address"
+      "meta_data",
+      "llm_data"
     ],
-    "title": "Company",
+    "title": "lme_detokenizer_input",
     "type": "object"
   },
-  "Person": {
-    "properties": {
-      "name": {
-        "title": "Name",
-        "type": "string"
-      },
-      "age": {
-        "title": "Age",
+  "lme_detokenizer_output": {
+    "$defs": {
+      "GraphType": {
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "title": "GraphType",
         "type": "integer"
       },
-      "email": {
+      "lme_output_meta": {
+        "properties": {
+          "graph_type": {
+            "$ref": "#/$defs/GraphType"
+          },
+          "status_msg": {
+            "title": "Status Msg",
+            "type": "string"
+          },
+          "status_code": {
+            "title": "Status Code",
+            "type": "integer"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "graph_type",
+          "status_msg",
+          "status_code",
+          "request_id"
+        ],
+        "title": "lme_output_meta",
+        "type": "object"
+      }
+    },
+    "properties": {
+      "meta_data": {
+        "$ref": "#/$defs/lme_output_meta"
+      },
+      "is_final": {
+        "description": "Indicates whether the decoder generation has finished.",
+        "title": "Is Final",
+        "type": "boolean"
+      },
+      "beam_strings": {
+        "description": "The generated text sequences (output strings) from each beam.",
+        "items": {
+          "type": "string"
+        },
+        "title": "Beam Strings",
+        "type": "array"
+      },
+      "beam_tokens_nums": {
+        "description": "The number of tokens in each beam.",
+        "items": {
+          "type": "integer"
+        },
+        "title": "Beam Tokens Nums",
+        "type": "array"
+      },
+      "logits": {
+        "additionalProperties": {
+          "type": "number"
+        },
+        "description": "The raw logits output mapped by token ID.",
+        "title": "Logits",
+        "type": "object"
+      },
+      "input_tokens_num": {
+        "description": "The count of input tokens processed.",
+        "title": "Input Tokens Num",
+        "type": "integer"
+      },
+      "feature": {
+        "default": "",
+        "description": "The MMR embedding feature std::vector[char].",
+        "title": "Feature",
+        "type": "string"
+      }
+    },
+    "required": [
+      "meta_data",
+      "is_final",
+      "beam_strings",
+      "beam_tokens_nums",
+      "logits",
+      "input_tokens_num"
+    ],
+    "title": "lme_detokenizer_output",
+    "type": "object"
+  },
+  "lme_llm_input": {
+    "$defs": {
+      "DataFormat": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "title": "DataFormat",
+        "type": "integer"
+      },
+      "DataType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "title": "DataType",
+        "type": "integer"
+      },
+      "GraphType": {
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "title": "GraphType",
+        "type": "integer"
+      },
+      "MemoryType": {
+        "enum": [
+          0,
+          1
+        ],
+        "title": "MemoryType",
+        "type": "integer"
+      },
+      "ProcMode": {
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "title": "ProcMode",
+        "type": "integer"
+      },
+      "Tensor": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Data"
+          },
+          "data_type": {
+            "$ref": "#/$defs/DataType"
+          },
+          "memory_type": {
+            "$ref": "#/$defs/MemoryType"
+          },
+          "device_id": {
+            "title": "Device Id",
+            "type": "integer"
+          },
+          "dims": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Dims",
+            "type": "array"
+          },
+          "format": {
+            "$ref": "#/$defs/DataFormat"
+          }
+        },
+        "required": [
+          "data_type",
+          "memory_type",
+          "device_id",
+          "dims",
+          "format"
+        ],
+        "title": "Tensor",
+        "type": "object"
+      },
+      "lme_input_meta": {
+        "properties": {
+          "graph_type": {
+            "$ref": "#/$defs/GraphType"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "integer"
+          },
+          "operation": {
+            "default": 1,
+            "description": "Process selection field, with values as powers of 2(2^n): pre = 1, tok = 2, vit = 4, llm = 8, dtk = 16.",
+            "title": "Operation",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "graph_type",
+          "request_id"
+        ],
+        "title": "lme_input_meta",
+        "type": "object"
+      },
+      "lme_output_meta": {
+        "properties": {
+          "graph_type": {
+            "$ref": "#/$defs/GraphType"
+          },
+          "status_msg": {
+            "title": "Status Msg",
+            "type": "string"
+          },
+          "status_code": {
+            "title": "Status Code",
+            "type": "integer"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "graph_type",
+          "status_msg",
+          "status_code",
+          "request_id"
+        ],
+        "title": "lme_output_meta",
+        "type": "object"
+      },
+      "lme_tokenizer_output": {
+        "properties": {
+          "meta_data": {
+            "$ref": "#/$defs/lme_output_meta"
+          },
+          "tokens": {
+            "description": "The input token IDs generated by the tokenizer for the model.",
+            "items": {
+              "type": "integer"
+            },
+            "title": "Tokens",
+            "type": "array"
+          },
+          "proc_modes": {
+            "description": "The processing modes applied during tokenization.",
+            "items": {
+              "$ref": "#/$defs/ProcMode"
+            },
+            "title": "Proc Modes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "meta_data",
+          "tokens",
+          "proc_modes"
+        ],
+        "title": "lme_tokenizer_output",
+        "type": "object"
+      },
+      "lme_vit_output": {
+        "properties": {
+          "meta_data": {
+            "$ref": "#/$defs/lme_output_meta"
+          },
+          "pic_tokens": {
+            "description": "The visual feature embeddings (tokens) extracted by the Vision Transformer (ViT) from input images.",
+            "items": {
+              "$ref": "#/$defs/Tensor"
+            },
+            "title": "Pic Tokens",
+            "type": "array"
+          }
+        },
+        "required": [
+          "meta_data",
+          "pic_tokens"
+        ],
+        "title": "lme_vit_output",
+        "type": "object"
+      }
+    },
+    "description": "Input data model for the LLM (Language Model) component.\nAggregates tokenized text and visual features.",
+    "properties": {
+      "meta_data": {
+        "$ref": "#/$defs/lme_input_meta"
+      },
+      "config": {
+        "description": "Configuration data in JSON format. See ProCfg.json for schema details.",
+        "title": "Config",
+        "type": "string"
+      },
+      "streaming": {
+        "default": false,
+        "description": "Whether to enable streaming mode for incremental output.",
+        "title": "Streaming",
+        "type": "boolean"
+      },
+      "lora_id": {
+        "description": "Identifier for the LoRA (Low-Rank Adaptation) weights to load.",
+        "title": "Lora Id",
+        "type": "string"
+      },
+      "tokenizer_data": {
+        "$ref": "#/$defs/lme_tokenizer_output",
+        "description": "Tokenized text data required by the LLM."
+      },
+      "vit_data": {
         "anyOf": [
           {
-            "type": "string"
+            "$ref": "#/$defs/lme_vit_output"
           },
           {
             "type": "null"
           }
         ],
         "default": null,
-        "title": "Email"
+        "description": "Optional visual features extracted by the Vision Transformer (ViT)."
       }
     },
     "required": [
-      "name",
-      "age"
+      "meta_data",
+      "config",
+      "lora_id",
+      "tokenizer_data"
     ],
-    "title": "Person",
-    "type": "object"
-  },
-  "lme_detokenizer_input": {
-    "properties": {},
-    "title": "lme_detokenizer_input",
-    "type": "object"
-  },
-  "lme_detokenizer_output": {
-    "properties": {},
-    "title": "lme_detokenizer_output",
-    "type": "object"
-  },
-  "lme_llm_input": {
-    "properties": {},
     "title": "lme_llm_input",
     "type": "object"
   },
   "lme_llm_output": {
-    "properties": {},
+    "$defs": {
+      "DataFormat": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "title": "DataFormat",
+        "type": "integer"
+      },
+      "DataType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "title": "DataType",
+        "type": "integer"
+      },
+      "GraphType": {
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "title": "GraphType",
+        "type": "integer"
+      },
+      "MemoryType": {
+        "enum": [
+          0,
+          1
+        ],
+        "title": "MemoryType",
+        "type": "integer"
+      },
+      "Tensor": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Data"
+          },
+          "data_type": {
+            "$ref": "#/$defs/DataType"
+          },
+          "memory_type": {
+            "$ref": "#/$defs/MemoryType"
+          },
+          "device_id": {
+            "title": "Device Id",
+            "type": "integer"
+          },
+          "dims": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Dims",
+            "type": "array"
+          },
+          "format": {
+            "$ref": "#/$defs/DataFormat"
+          }
+        },
+        "required": [
+          "data_type",
+          "memory_type",
+          "device_id",
+          "dims",
+          "format"
+        ],
+        "title": "Tensor",
+        "type": "object"
+      },
+      "lme_output_meta": {
+        "properties": {
+          "graph_type": {
+            "$ref": "#/$defs/GraphType"
+          },
+          "status_msg": {
+            "title": "Status Msg",
+            "type": "string"
+          },
+          "status_code": {
+            "title": "Status Code",
+            "type": "integer"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "graph_type",
+          "status_msg",
+          "status_code",
+          "request_id"
+        ],
+        "title": "lme_output_meta",
+        "type": "object"
+      }
+    },
+    "properties": {
+      "meta_data": {
+        "$ref": "#/$defs/lme_output_meta"
+      },
+      "is_final": {
+        "description": "Indicates whether the decoder generation has finished.",
+        "title": "Is Final",
+        "type": "boolean"
+      },
+      "beam_tokens": {
+        "description": "The generated token sequences (output IDs) from each beam.",
+        "items": {
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "title": "Beam Tokens",
+        "type": "array"
+      },
+      "advance_output": {
+        "additionalProperties": {
+          "$ref": "#/$defs/Tensor"
+        },
+        "description": "Intermediate output tensors for advanced processing (e.g., logits, KV-cache).",
+        "title": "Advance Output",
+        "type": "object"
+      },
+      "dictionary_index": {
+        "description": "The index corresponding to the selected token in the model's vocabulary.",
+        "title": "Dictionary Index",
+        "type": "integer"
+      },
+      "search_tokens": {
+        "description": "The token sequences resulting from the search algorithm (e.g., beam search).",
+        "items": {
+          "type": "integer"
+        },
+        "title": "Search Tokens",
+        "type": "array"
+      },
+      "input_tokens_num": {
+        "description": "The total count of input tokens processed by the model.",
+        "title": "Input Tokens Num",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "meta_data",
+      "is_final",
+      "beam_tokens",
+      "advance_output",
+      "dictionary_index",
+      "search_tokens",
+      "input_tokens_num"
+    ],
     "title": "lme_llm_output",
     "type": "object"
   },
@@ -242,19 +832,34 @@
         ],
         "title": "Tensor",
         "type": "object"
+      },
+      "lme_input_meta": {
+        "properties": {
+          "graph_type": {
+            "$ref": "#/$defs/GraphType"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "integer"
+          },
+          "operation": {
+            "default": 1,
+            "description": "Process selection field, with values as powers of 2(2^n): pre = 1, tok = 2, vit = 4, llm = 8, dtk = 16.",
+            "title": "Operation",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "graph_type",
+          "request_id"
+        ],
+        "title": "lme_input_meta",
+        "type": "object"
       }
     },
     "properties": {
-      "request_id": {
-        "title": "Request Id",
-        "type": "integer"
-      },
-      "graph_type": {
-        "$ref": "#/$defs/GraphType"
-      },
-      "input_prompt": {
-        "title": "Input Prompt",
-        "type": "string"
+      "meta_data": {
+        "$ref": "#/$defs/lme_input_meta"
       },
       "input_pics": {
         "items": {
@@ -264,59 +869,210 @@
         "type": "array"
       },
       "fps": {
+        "description": "fps=0 表示图片模式，>0 表示视频模式",
+        "title": "Fps",
+        "type": "number"
+      },
+      "frame_ids": {
         "anyOf": [
           {
-            "type": "number"
+            "items": {
+              "type": "integer"
+            },
+            "type": "array"
           },
           {
             "type": "null"
           }
         ],
         "default": null,
-        "title": "Fps"
-      },
-      "frame_ids": {
-        "items": {
-          "type": "integer"
-        },
-        "title": "Frame Ids",
-        "type": "array"
-      },
-      "config": {
-        "title": "Config",
-        "type": "string"
-      },
-      "lora_id": {
-        "title": "Lora Id",
-        "type": "string"
-      },
-      "streaming": {
-        "default": false,
-        "description": "enable streaming or not",
-        "title": "Streaming",
-        "type": "boolean"
-      },
-      "enable_thinking": {
-        "default": 0,
-        "description": "thiniking mode with 0-disable, 1-enable",
-        "title": "Enable Thinking",
-        "type": "integer"
+        "description": "视频模式，表示帧号",
+        "title": "Frame Ids"
       }
     },
     "required": [
-      "request_id",
-      "graph_type",
-      "input_prompt",
+      "meta_data",
       "input_pics",
-      "frame_ids",
-      "config",
-      "lora_id"
+      "fps"
     ],
     "title": "lme_preprocess_input",
     "type": "object"
   },
   "lme_preprocess_output": {
-    "properties": {},
+    "$defs": {
+      "DataFormat": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "title": "DataFormat",
+        "type": "integer"
+      },
+      "DataType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "title": "DataType",
+        "type": "integer"
+      },
+      "GraphType": {
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "title": "GraphType",
+        "type": "integer"
+      },
+      "MemoryType": {
+        "enum": [
+          0,
+          1
+        ],
+        "title": "MemoryType",
+        "type": "integer"
+      },
+      "ProcMode": {
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "title": "ProcMode",
+        "type": "integer"
+      },
+      "Tensor": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Data"
+          },
+          "data_type": {
+            "$ref": "#/$defs/DataType"
+          },
+          "memory_type": {
+            "$ref": "#/$defs/MemoryType"
+          },
+          "device_id": {
+            "title": "Device Id",
+            "type": "integer"
+          },
+          "dims": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Dims",
+            "type": "array"
+          },
+          "format": {
+            "$ref": "#/$defs/DataFormat"
+          }
+        },
+        "required": [
+          "data_type",
+          "memory_type",
+          "device_id",
+          "dims",
+          "format"
+        ],
+        "title": "Tensor",
+        "type": "object"
+      },
+      "lme_output_meta": {
+        "properties": {
+          "graph_type": {
+            "$ref": "#/$defs/GraphType"
+          },
+          "status_msg": {
+            "title": "Status Msg",
+            "type": "string"
+          },
+          "status_code": {
+            "title": "Status Code",
+            "type": "integer"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "graph_type",
+          "status_msg",
+          "status_code",
+          "request_id"
+        ],
+        "title": "lme_output_meta",
+        "type": "object"
+      },
+      "lme_preprocess_data": {
+        "properties": {
+          "pic": {
+            "$ref": "#/$defs/Tensor"
+          },
+          "patch_num_width": {
+            "title": "Patch Num Width",
+            "type": "integer"
+          },
+          "patch_num": {
+            "title": "Patch Num",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "pic",
+          "patch_num_width",
+          "patch_num"
+        ],
+        "title": "lme_preprocess_data",
+        "type": "object"
+      }
+    },
+    "properties": {
+      "meta_data": {
+        "$ref": "#/$defs/lme_output_meta"
+      },
+      "output_data": {
+        "description": "The processed image.",
+        "items": {
+          "$ref": "#/$defs/lme_preprocess_data"
+        },
+        "title": "Output Data",
+        "type": "array"
+      },
+      "proc_mode": {
+        "$ref": "#/$defs/ProcMode",
+        "description": "The processing mode (e.g., text-only, image-only, interleaved)."
+      }
+    },
+    "required": [
+      "meta_data",
+      "output_data",
+      "proc_mode"
+    ],
     "title": "lme_preprocess_output",
     "type": "object"
   },
@@ -410,15 +1166,34 @@
         ],
         "title": "Tensor",
         "type": "object"
+      },
+      "lme_input_meta": {
+        "properties": {
+          "graph_type": {
+            "$ref": "#/$defs/GraphType"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "integer"
+          },
+          "operation": {
+            "default": 1,
+            "description": "Process selection field, with values as powers of 2(2^n): pre = 1, tok = 2, vit = 4, llm = 8, dtk = 16.",
+            "title": "Operation",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "graph_type",
+          "request_id"
+        ],
+        "title": "lme_input_meta",
+        "type": "object"
       }
     },
     "properties": {
-      "graph_type": {
-        "$ref": "#/$defs/GraphType"
-      },
-      "request_id": {
-        "title": "Request Id",
-        "type": "integer"
+      "meta_data": {
+        "$ref": "#/$defs/lme_input_meta"
       },
       "input_prompt": {
         "default": false,
@@ -470,8 +1245,7 @@
       }
     },
     "required": [
-      "graph_type",
-      "request_id"
+      "meta_data"
     ],
     "title": "lme_tokenizer_input",
     "type": "object"
@@ -498,22 +1272,41 @@
         ],
         "title": "ProcMode",
         "type": "integer"
+      },
+      "lme_output_meta": {
+        "properties": {
+          "graph_type": {
+            "$ref": "#/$defs/GraphType"
+          },
+          "status_msg": {
+            "title": "Status Msg",
+            "type": "string"
+          },
+          "status_code": {
+            "title": "Status Code",
+            "type": "integer"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "graph_type",
+          "status_msg",
+          "status_code",
+          "request_id"
+        ],
+        "title": "lme_output_meta",
+        "type": "object"
       }
     },
     "properties": {
-      "graph_type": {
-        "$ref": "#/$defs/GraphType"
-      },
-      "status": {
-        "title": "Status",
-        "type": "integer"
-      },
-      "request_id": {
-        "title": "Request Id",
-        "type": "integer"
+      "meta_data": {
+        "$ref": "#/$defs/lme_output_meta"
       },
       "tokens": {
-        "description": "output input ids from tokenizer operator",
+        "description": "The input token IDs generated by the tokenizer for the model.",
         "items": {
           "type": "integer"
         },
@@ -521,7 +1314,7 @@
         "type": "array"
       },
       "proc_modes": {
-        "description": "tokenizer prrocess modes",
+        "description": "The processing modes applied during tokenization.",
         "items": {
           "$ref": "#/$defs/ProcMode"
         },
@@ -530,9 +1323,7 @@
       }
     },
     "required": [
-      "graph_type",
-      "status",
-      "request_id",
+      "meta_data",
       "tokens",
       "proc_modes"
     ],
@@ -540,12 +1331,358 @@
     "type": "object"
   },
   "lme_vit_input": {
-    "properties": {},
+    "$defs": {
+      "DataFormat": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "title": "DataFormat",
+        "type": "integer"
+      },
+      "DataType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "title": "DataType",
+        "type": "integer"
+      },
+      "GraphType": {
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "title": "GraphType",
+        "type": "integer"
+      },
+      "MemoryType": {
+        "enum": [
+          0,
+          1
+        ],
+        "title": "MemoryType",
+        "type": "integer"
+      },
+      "ProcMode": {
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "title": "ProcMode",
+        "type": "integer"
+      },
+      "Tensor": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Data"
+          },
+          "data_type": {
+            "$ref": "#/$defs/DataType"
+          },
+          "memory_type": {
+            "$ref": "#/$defs/MemoryType"
+          },
+          "device_id": {
+            "title": "Device Id",
+            "type": "integer"
+          },
+          "dims": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Dims",
+            "type": "array"
+          },
+          "format": {
+            "$ref": "#/$defs/DataFormat"
+          }
+        },
+        "required": [
+          "data_type",
+          "memory_type",
+          "device_id",
+          "dims",
+          "format"
+        ],
+        "title": "Tensor",
+        "type": "object"
+      },
+      "lme_input_meta": {
+        "properties": {
+          "graph_type": {
+            "$ref": "#/$defs/GraphType"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "integer"
+          },
+          "operation": {
+            "default": 1,
+            "description": "Process selection field, with values as powers of 2(2^n): pre = 1, tok = 2, vit = 4, llm = 8, dtk = 16.",
+            "title": "Operation",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "graph_type",
+          "request_id"
+        ],
+        "title": "lme_input_meta",
+        "type": "object"
+      },
+      "lme_output_meta": {
+        "properties": {
+          "graph_type": {
+            "$ref": "#/$defs/GraphType"
+          },
+          "status_msg": {
+            "title": "Status Msg",
+            "type": "string"
+          },
+          "status_code": {
+            "title": "Status Code",
+            "type": "integer"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "graph_type",
+          "status_msg",
+          "status_code",
+          "request_id"
+        ],
+        "title": "lme_output_meta",
+        "type": "object"
+      },
+      "lme_preprocess_data": {
+        "properties": {
+          "pic": {
+            "$ref": "#/$defs/Tensor"
+          },
+          "patch_num_width": {
+            "title": "Patch Num Width",
+            "type": "integer"
+          },
+          "patch_num": {
+            "title": "Patch Num",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "pic",
+          "patch_num_width",
+          "patch_num"
+        ],
+        "title": "lme_preprocess_data",
+        "type": "object"
+      },
+      "lme_preprocess_output": {
+        "properties": {
+          "meta_data": {
+            "$ref": "#/$defs/lme_output_meta"
+          },
+          "output_data": {
+            "description": "The processed image.",
+            "items": {
+              "$ref": "#/$defs/lme_preprocess_data"
+            },
+            "title": "Output Data",
+            "type": "array"
+          },
+          "proc_mode": {
+            "$ref": "#/$defs/ProcMode",
+            "description": "The processing mode (e.g., text-only, image-only, interleaved)."
+          }
+        },
+        "required": [
+          "meta_data",
+          "output_data",
+          "proc_mode"
+        ],
+        "title": "lme_preprocess_output",
+        "type": "object"
+      }
+    },
+    "properties": {
+      "meta_data": {
+        "$ref": "#/$defs/lme_input_meta"
+      },
+      "preprocess_data": {
+        "$ref": "#/$defs/lme_preprocess_output"
+      }
+    },
+    "required": [
+      "meta_data",
+      "preprocess_data"
+    ],
     "title": "lme_vit_input",
     "type": "object"
   },
   "lme_vit_output": {
-    "properties": {},
+    "$defs": {
+      "DataFormat": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "title": "DataFormat",
+        "type": "integer"
+      },
+      "DataType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "title": "DataType",
+        "type": "integer"
+      },
+      "GraphType": {
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "title": "GraphType",
+        "type": "integer"
+      },
+      "MemoryType": {
+        "enum": [
+          0,
+          1
+        ],
+        "title": "MemoryType",
+        "type": "integer"
+      },
+      "Tensor": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Data"
+          },
+          "data_type": {
+            "$ref": "#/$defs/DataType"
+          },
+          "memory_type": {
+            "$ref": "#/$defs/MemoryType"
+          },
+          "device_id": {
+            "title": "Device Id",
+            "type": "integer"
+          },
+          "dims": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Dims",
+            "type": "array"
+          },
+          "format": {
+            "$ref": "#/$defs/DataFormat"
+          }
+        },
+        "required": [
+          "data_type",
+          "memory_type",
+          "device_id",
+          "dims",
+          "format"
+        ],
+        "title": "Tensor",
+        "type": "object"
+      },
+      "lme_output_meta": {
+        "properties": {
+          "graph_type": {
+            "$ref": "#/$defs/GraphType"
+          },
+          "status_msg": {
+            "title": "Status Msg",
+            "type": "string"
+          },
+          "status_code": {
+            "title": "Status Code",
+            "type": "integer"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "graph_type",
+          "status_msg",
+          "status_code",
+          "request_id"
+        ],
+        "title": "lme_output_meta",
+        "type": "object"
+      }
+    },
+    "properties": {
+      "meta_data": {
+        "$ref": "#/$defs/lme_output_meta"
+      },
+      "pic_tokens": {
+        "description": "The visual feature embeddings (tokens) extracted by the Vision Transformer (ViT) from input images.",
+        "items": {
+          "$ref": "#/$defs/Tensor"
+        },
+        "title": "Pic Tokens",
+        "type": "array"
+      }
+    },
+    "required": [
+      "meta_data",
+      "pic_tokens"
+    ],
     "title": "lme_vit_output",
     "type": "object"
   }

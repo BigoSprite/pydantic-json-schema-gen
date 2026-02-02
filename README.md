@@ -62,7 +62,7 @@ uv run gen
 3.  **定义你的新模型**，并**必须**添加 `_is_pydantic_model_ = True` 属性，以便工具能够识别它：
     ```python
     class YourNewModel(BaseModel):
-        _is_pydantic_model_ = True  # 必需的标记
+        _is_pydantic_model_ = True  # 必需的标记（!!!注释掉该属性则表示跳过生成）
         field_name: str
         optional_field: int | None = None
         # ... 其他字段定义 ...
@@ -76,7 +76,7 @@ uv run gen
         _is_pydantic_model_ = True
         name: str
         age: int
-        email: str | None = None
+        email: str | None = None ####### !!!若需生成可选的参数，需要提供默认值（或通过 Field(default=None)实现
 
     class Address(BaseModel):
         _is_pydantic_model_ = True
@@ -91,5 +91,25 @@ uv run gen
         species: str
         owner: Person # 可以引用其他模型
     ```
+
+在默认保存 json-schema 之外，该工具提供保存示例 json-data 的功能，通过为每个class提供 `@classmethod def dump_json(cls, indent: int = 4):`函数实现。缺省时，若未提供，则工具默认不生成 json-data，例如：
+    ```python
+    class Person(BaseModel):
+        _is_pydantic_model_ = True
+        name: str
+        age: int
+        email: str | None = None
+
+        @classmethod
+        def dump_json(cls, indent: int = 4):
+            instance = cls(
+                name="hean",
+                age=18,
+                email="hean@example.com"
+            )
+
+            return instance.model_dump_json(indent=indent)
+    ```
+
 4.  **保存文件**。
 5.  **重新运行** `uv run gen`，你的新模型 `Pet` 就会被发现并可供选择。
